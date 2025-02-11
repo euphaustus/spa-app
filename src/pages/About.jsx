@@ -21,7 +21,7 @@ const About = () => {
 
 
     return (
-        <div>
+        <div className="pagebox">
             <h1>About My Project</h1>
             <h2>What is my project?</h2>
             <p>{p1}</p>

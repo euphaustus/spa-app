@@ -1,11 +1,11 @@
 import React from 'react';
 
 
-const Home = () => {
+const Nothing = () => {
 
 
     return (
-        <div>
+        <div className="pagebox">
             <h1>404</h1>
             <p>Something's wrong, that page isn't here right now.<br></br>
             Try again later?</p>
@@ -13,4 +13,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default Nothing;
