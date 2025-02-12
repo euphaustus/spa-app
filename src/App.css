@@ -61,12 +61,21 @@ body {
   width: 100%;
 }
 
+
+
 .homepagebox {
     display: grid;
     width: 100%;
     height: 100%;
     grid-template-rows: 50% 50%;
-    grid-template-columns: 1fr 1
+    grid-template-columns: 2fr 1fr
+}
+
+.todaypagebox {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: 1fr 2fr 1fr
 }
 
 .contentbox {
@@ -85,12 +94,6 @@ body {
   max-width: 100%;
 }
 
-.contentbox img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
 .homepagebox .contentbox:nth-child(1) {
   grid-column: span 2;
 }
@@ -103,13 +106,7 @@ body {
   grid-column: 2;
 }
 
-
 #nasabox {
-
-
-}
-
-#smallboxdiv {
 
 }
 
@@ -121,7 +118,12 @@ body {
 
 }
 
+#aboutbox {
+  padding-left: 100px;
+  padding-right: 100px;
+}
 
-
-
+#calendarbox {
+  width: 100%;
+}
 
