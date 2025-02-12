@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState} from 'react';
 
 import { BrowserRouter, Link, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
@@ -26,14 +26,35 @@ const ScrollHandler = ({ children }) => {
 };
 
 function App() {
+
+  const [showNav, setShowNav] = useState(true);
+  let timeoutId;
+
+  const handleMouseMove = () => {
+    setShowNav(true);
+
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+    }
+
+    timeoutId = setTimeout(() => {
+      setShowNav(false);
+    } , 3000);
+  };
+
+  useEffect(() => {
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
   
   return (
     <BrowserRouter>
-      <div className="App">
+      <div className="App" onMouseMove={handleMouseMove}>
         
-
         <div className='content'>
-
           <ScrollHandler>
             <Routes>
                 <Route exact path="/" element={<Home/>} />
@@ -42,24 +63,23 @@ function App() {
                 <Route path="/*" element={<Nothing/>} />
             </Routes>
             </ScrollHandler>
-
         </div>
 
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/about">About</Link>
-            </li>
-            <li>
-              <Link to ="/background">Background</Link>
-            </li>
-
-          </ul>
-        </nav>
-        
+        {showNav && (
+          <nav>
+            <ul>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/about">About</Link>
+              </li>
+              <li>
+                <Link to ="/background">Background</Link>
+              </li>
+            </ul>
+          </nav>
+        )}
 
       </div>
     </BrowserRouter>
