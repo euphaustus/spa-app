@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import LoginForm from '../Utilities/LoginForm';
+import LoginForm from '../components/LoginForm';
 
 
 
@@ -52,7 +52,7 @@ function Home() {
                 <p>This is another API box, this time for weather</p>
             </div>
             <div className='contentbox' id='loginbox'>
-                <p>RIP login form. When it's working the calendar and today pages will be locked behind being logged in.</p>
+                <LoginForm/>
             </div>
 
         </div>
