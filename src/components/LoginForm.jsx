@@ -2,20 +2,23 @@
 import React, { useState } from 'react';
 import { login } from '../services/auth'; // Import your login service
 
+import {useAuth} from '../contexts/AuthContext';
+
 function LoginForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const { login: loginContext } = useAuth();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError(null);
     try {
       const userData = await login(username, password);
-      // Handle successful login (e.g., store token, redirect, update UI)
       console.log('Login successful in LoginForm!', userData);
-      localStorage.setItem('authToken', userData.token); // Store token (example)
-      // ... (You'll likely want to communicate login success back to the Home page or App level)
+      localStorage.setItem('authToken', userData.token); // Still keep localStorage for persistence (optional, or context only)
+      loginContext(userData.token); // **Update AuthContext state on login!**
+      // ... (Consider redirecting or other UI updates)
     } catch (loginError) {
       setError(loginError.message);
       console.error('Login failed in LoginForm:', loginError);

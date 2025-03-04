@@ -24,3 +24,9 @@ export async function login(username, password) {
     throw error; // Re-throw to be caught in LoginPage
   }
 }
+
+export async function logout() {
+  // For now, simply clear the token from local storage
+  localStorage.removeItem('authToken');
+  console.log('User logged out. Token removed from localStorage.');
+}
