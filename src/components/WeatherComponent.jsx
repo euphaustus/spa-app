@@ -1,7 +1,6 @@
-// src/components/WeatherComponent.jsx (modified to use IP geolocation)
 import React, { useState, useEffect } from 'react';
 import { fetchCurrentWeather } from '../services/weatherApi';
-import { fetchLocationByIp } from '../services/geoApi'; // Import IP geolocation service
+//import { fetchLocationByIp } from '../services/geoApi'; // Import IP geolocation service
 
 function WeatherComponent() {
   const [weatherData, setWeatherData] = useState(null);
@@ -17,7 +16,13 @@ function WeatherComponent() {
 
       try {
         // 1. Fetch location by IP first
-        const locationData = await fetchLocationByIp();
+
+        const locationResponse = await fetch('https://ip-api.com/json'); // Direct fetch to ip-api.com
+        if (!locationResponse.ok) {
+          throw new Error(`IP API Error: ${locationResponse.status} - ${locationResponse.statusText}`);
+        }
+
+        const locationData = await locationResponse.json();
         const ipCity = locationData.city; // Get city name from IP lookup
         setCity(ipCity); // Set the city state
 

@@ -1,6 +1,6 @@
 const IP_API_BASE_URL = 'https://ip-api.com/json'; // Free IP geolocation API
 
-export async function fetchLocationByIp() {
+export async function fetchLocationByIp() {f
   try {
     const response = await fetch(IP_API_BASE_URL);
 
