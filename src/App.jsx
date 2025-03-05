@@ -10,6 +10,7 @@ import Today from './pages/Today';
 import Calendar from './pages/Calendar';
 import NavBar from './components/NavBar';
 import useKeyNavigation from './hooks/useKeyNavigation';
+import ProtectedRoute from './components/ProtectedRoute';
 
 
 {/*locks the screen and hides the scroll bars */}
@@ -31,20 +32,28 @@ const ScrollHandler = ({ children }) => {
 function App() {
 
 
-  useKeyNavigation();
+    useKeyNavigation();
+
+    const protectedRoutes = ["/today", "/calendar"];
 
 
-  return (
+    return (
 
       <div className="App"> {/* Removed onMouseMove here */}
-        <NavBar/>
+        <NavBar protectedRoutes = {protectedRoutes}/>
 
         <div className='content'>
           <ScrollHandler>
             <Routes>
                 <Route exact path="/" element={<Home/>} />
-                <Route path="/today" element={<Today/>}/>
-                <Route path="/calendar" element={<Calendar/>}/>
+                <Route path="/today" element={
+                    <ProtectedRoute>
+                        <Today/>
+                    </ProtectedRoute>}/>
+                <Route path="/calendar" element={
+                    <ProtectedRoute>
+                        <Calendar/>
+                    </ProtectedRoute>}/>
                 <Route path="/about" element={<About/>} />
                 <Route path="/background" element={<Background/>}/>
                 <Route path="/*" element={<Nothing/>} />

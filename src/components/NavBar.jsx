@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import LogoutButton from './LogoutButton';
 import { useAuth } from '../contexts/AuthContext';
 
-function NavBar() {
+function NavBar({protectedRoutes}) {
   const [showNav, setShowNav] = useState(true);
   let timeoutId;
   const { isLoggedIn } = useAuth(); // Get isLoggedIn state from AuthContext!
   const { logout: logoutContext } = useAuth();
+  const location = useLocation();
 
   const handleMouseMove = () => {
     setShowNav(true);
@@ -36,10 +37,16 @@ function NavBar() {
               <Link to="/">Home</Link>
             </li>
             <li>
-              <Link to="/today">Today</Link>
+              <Link to="/today"
+                className={location.pathname === '/today' ? 'active' : ''}
+                style={!isLoggedIn && protectedRoutes.includes('/today') ? { opacity: 0.5, pointerEvents: 'none', color: 'grey' } : {}}
+              >Today</Link>
             </li>
             <li>
-              <Link to="/calendar">Calendar</Link>
+              <Link to="/calendar"
+              className={location.pathname === '/calendar' ? 'active' : ''}
+              style={!isLoggedIn && protectedRoutes.includes('/calendar') ? { opacity: 0.5, pointerEvents: 'none', color: 'grey' } : {}}
+              >Calendar</Link>
             </li>
             <li>
               <Link to="/about">About</Link>

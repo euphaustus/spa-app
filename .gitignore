@@ -15,7 +15,8 @@ dist-ssr
 *.local
 public
 
-
+# .env
+.env.local
 
 
 

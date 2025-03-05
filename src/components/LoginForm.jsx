@@ -1,6 +1,6 @@
 // src/components/LoginForm.jsx
 import React, { useState } from 'react';
-import { login } from '../services/auth'; // Import your login service
+import { login } from '../services/auth';
 
 import {useAuth} from '../contexts/AuthContext';
 
@@ -16,9 +16,8 @@ function LoginForm() {
     try {
       const userData = await login(username, password);
       console.log('Login successful in LoginForm!', userData);
-      localStorage.setItem('authToken', userData.token); // Still keep localStorage for persistence (optional, or context only)
-      loginContext(userData.token); // **Update AuthContext state on login!**
-      // ... (Consider redirecting or other UI updates)
+      localStorage.setItem('authToken', userData.token);
+ 
     } catch (loginError) {
       setError(loginError.message);
       console.error('Login failed in LoginForm:', loginError);
@@ -34,6 +33,7 @@ function LoginForm() {
           <label htmlFor="login-username">Username:</label>
           <input
             type="text"
+
             id="login-username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -43,6 +43,7 @@ function LoginForm() {
           <label htmlFor="login-password">Password:</label>
           <input
             type="password"
+            
             id="login-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
