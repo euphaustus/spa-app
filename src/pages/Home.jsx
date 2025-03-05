@@ -4,8 +4,7 @@ import LoginForm from '../components/LoginForm';
 
 
 
-{/* I've been playing around with this API for a while,
-    so I'm throwing this in here to work on later */}
+
 const NasaApod = () => {
     const [photoData, setPhotoData] = useState(null);
 
