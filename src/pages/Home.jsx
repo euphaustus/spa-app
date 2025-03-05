@@ -5,12 +5,6 @@ import WeatherComponent from '../components/WeatherComponent';
 
 
 
-
-
-
-
-
-
 function Home() {
 
     const p1 = `

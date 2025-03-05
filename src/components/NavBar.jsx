@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 function NavBar({protectedRoutes}) {
   const [showNav, setShowNav] = useState(true);
   let timeoutId;
-  const { isLoggedIn } = useAuth(); // Get isLoggedIn state from AuthContext!
+  const { isLoggedIn } = useAuth();
   const { logout: logoutContext } = useAuth();
   const location = useLocation();
 
@@ -29,7 +29,7 @@ function NavBar({protectedRoutes}) {
 
 
   return (
-    <div onMouseMove={handleMouseMove}> {/* Attach mousemove handler here */}
+    <div onMouseMove={handleMouseMove}>
       {showNav && (
         <nav>
           <ul>

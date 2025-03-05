@@ -32,7 +32,7 @@ function useKeyNavigation() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [navigate]); // Depend on navigate to avoid stale closures
+  }, [navigate]);
 }
 
 export default useKeyNavigation;

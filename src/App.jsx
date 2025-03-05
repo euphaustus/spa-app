@@ -39,7 +39,7 @@ function App() {
 
     return (
 
-      <div className="App"> {/* Removed onMouseMove here */}
+      <div className="App">
         <NavBar protectedRoutes = {protectedRoutes}/>
 
         <div className='content'>

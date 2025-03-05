@@ -14,7 +14,7 @@ function WeatherComponent() {
       setError(null);
 
       try {
-        const data = await fetchCurrentWeather(city); // Fetch weather for the **hardcoded city**
+        const data = await fetchCurrentWeather(city);
         setWeatherData(data);
       } catch (apiError) {
         setError(apiError.message || 'Failed to load weather data');

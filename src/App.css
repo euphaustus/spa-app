@@ -1,15 +1,10 @@
-/* App.css */
-
-
-
-
 nav {
   position: fixed;
   bottom: 0;
   width: 100%;
   background-color: #333;
   padding: 10px 0;
-  z-index: 1000; /* Ensures the nav stays on top of other elements */
+  z-index: 1000;
 }
 
 nav ul {
@@ -110,11 +105,9 @@ body {
 
 }
 
-/* In your App.css or CSS file - UPDATED CSS */
-
 .nasa-apod {
-  display: flex;          /* **Make nasa-apod a flex container** */
-  flex-direction: row;      /* **Arrange children in a row (horizontally)** */
+  display: flex;
+  flex-direction: row;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -122,36 +115,36 @@ body {
   box-sizing: border-box;
 }
 
-.nasa-apod-image-column { /* Style for the image/video column */
-  flex: 1;               /* Take up available space, but can shrink */
-  max-width: 50%;        /*  Maximum width for image column (adjust as needed - e.g., 40%, 60%, etc.) */
-  padding-right: 15px;    /* Add some spacing between image and text columns */
-  display: flex;         /* Flexbox for image column to center image vertically (optional) */
-  justify-content: center; /* Center image horizontally within column (optional) */
-  align-items: center;    /* Center image vertically within column (optional) */
-  overflow: hidden;      /* Clip image overflow in the column (optional) */
+.nasa-apod-image-column {
+  flex: 1;
+  max-width: 50%;
+  padding-right: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
 .nasa-apod-image-column img {
   display: block;
-  max-width: 100%;     /* Image max width within its column */
+  max-width: 100%;
   height: auto;
-  max-height: 90%;    /* Limit image max height within its column - ADJUST AS NEEDED */
-  object-fit: contain; /* Scale image to fit, preserving aspect ratio */
+  max-height: 90%;
+  object-fit: contain;
 }
 
-.nasa-apod-text-column { /* Style for the text column */
-  flex: 1;               /* Take up available space, but can shrink */
-  padding-left: 15px;     /* Add spacing between image and text column */
-  display: flex;         /* Flexbox for text column to stack text vertically */
-  flex-direction: column; /* Stack text elements vertically */
-  justify-content: center; /* Vertically center text content within column (optional) */
+.nasa-apod-text-column {
+  flex: 1;
+  padding-left: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 
 .nasa-apod h2, .nasa-apod h3, .nasa-apod .date, .nasa-apod .explanation {
   width: 100%;
-  text-align: left;     /* **Change to left align text in text column** */
+  text-align: left;
   margin-bottom: 8px;
   overflow-wrap: break-word;
   word-break: break-word;
@@ -159,7 +152,7 @@ body {
 
 .nasa-apod .explanation {
   font-size: 0.8em;
-  text-align: justify; /* Keep explanation justify if you like, or change to left */
+  text-align: justify;
 }
 
 #weatherbox {
