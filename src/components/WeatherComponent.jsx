@@ -19,7 +19,7 @@ function WeatherComponent() {
 
         const locationResponse = await fetch('https://ip-api.com/json'); // Direct fetch to ip-api.com
         if (!locationResponse.ok) {
-          throw new Error(`IP API Error: ${locationResponse.status} - ${locationResponse.statusText}`);
+          setCity("Salt Lake City")
         }
 
         const locationData = await locationResponse.json();
