@@ -1,5 +1,5 @@
 [functions]
-  directory = "app/netlify/functions"
+  directory = "netlify/functions"
 
 [build]
   publish = "dist"
