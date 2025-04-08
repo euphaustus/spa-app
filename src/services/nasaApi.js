@@ -1,6 +1,6 @@
 export async function fetchNasaApodData() {
   try {
-    const response = await fetch('/api/nasa_apod');
+    const response = await fetch('/api/nasa-apod-go');
 
     if (!response.ok) {
       let message = `HTTP error! status: ${response.status}`;
