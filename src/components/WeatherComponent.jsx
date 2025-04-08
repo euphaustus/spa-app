@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { fetchCurrentWeather } from '../services/weatherApi';
-import { fetchLocationByIp } from '../services/geoApi';
 
 function WeatherComponent() {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const city = "Salt Lake City" // change when going back to ip-based
+  const city = "Salt Lake City"; // change when going back to ip-based
 
   useEffect(() => {
     const loadWeatherData = async () => {
@@ -14,7 +12,20 @@ function WeatherComponent() {
       setError(null);
 
       try {
-        const data = await fetchCurrentWeather(city);
+        const response = await fetch(`/api/weather?city=${city}`);
+        if (!response.ok) {
+          let message = `Weather API error! Status: ${response.status}`;
+          try {
+            const errorData = await response.json();
+            if (errorData && errorData.error) {
+              message += ` - ${errorData.error}`;
+            }
+          } catch (jsonError) {
+            console.error("Failed to parse error JSON from Weather API", jsonError);
+          }
+          throw new Error(message);
+        }
+        const data = await response.json();
         setWeatherData(data);
       } catch (apiError) {
         setError(apiError.message || 'Failed to load weather data');
