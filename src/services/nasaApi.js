@@ -1,21 +1,23 @@
-const NASA_API_KEY = import.meta.env.VITE_NASA_API_KEY;
-const NASA_APOD_API_URL = 'https://api.nasa.gov/planetary/apod';
-
 export async function fetchNasaApodData() {
   try {
-    const url = `${NASA_APOD_API_URL}?api_key=${NASA_API_KEY}`;
-    const response = await fetch(url);
+    const response = await fetch('/api/nasa_apod');
 
     if (!response.ok) {
-
-      const message = `HTTP error! status: ${response.status}`;
+      let message = `HTTP error! status: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        if (errorData && errorData.error) {
+          message += ` - ${errorData.error}`;
+        }
+      } catch (jsonError) {
+        console.error("Failed to parse error JSON from Netlify Function", jsonError);
+      }
       throw new Error(message);
     }
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching NASA APOD data:', error);
-
+    console.error('Error fetching NASA APOD data from Netlify Function:', error);
     throw error;
   }
 }
