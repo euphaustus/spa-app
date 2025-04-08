@@ -1,5 +1,4 @@
 // netlify/functions/nasa_apod.js
-const fetch = require('node-fetch');
 
 exports.handler = async (event, context) => {
   const nasaApiKey = process.env.VITE_NASA_API_KEY;
@@ -14,6 +13,7 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
     const url = `${nasaApodApiUrl}?api_key=${nasaApiKey}`;
     const response = await fetch(url);
 
