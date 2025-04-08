@@ -10,7 +10,7 @@ function NasaApod() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch('/.netlify/functions/nasa-apod'); // Direct call to the function
+        const response = await fetch('/.netlify/functions/nasa_apod'); // Direct call to the function
         if (!response.ok) {
           let message = `NASA APOD API error! Status: ${response.status}`;
           try {
