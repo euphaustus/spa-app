@@ -12,7 +12,7 @@ function TestApiComponent() {
       setApiResponse(null);
 
       try {
-        const response = await fetch('/api/test');
+        const response = await fetch('/.netlify/functions/test');
 
         if (!response.ok) {
           let errorMessage = `HTTP error! status: ${response.status}`;

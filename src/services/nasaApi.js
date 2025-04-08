@@ -1,6 +1,6 @@
 export async function fetchNasaApodData() {
   try {
-    const response = await fetch('/api/nasa-apod');
+    const response = await fetch('/.netlify/functions/nasa-apod');
 
     if (!response.ok) {
       let message = `HTTP error! status: ${response.status}`;
