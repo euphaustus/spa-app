@@ -12,7 +12,7 @@ function WeatherComponent() {
       setError(null);
 
       try {
-        const response = await fetch(`/api/weather?city=${city}`);
+        const response = await fetch(`/api/weather`);
         if (!response.ok) {
           let message = `Weather API error! Status: ${response.status}`;
           try {
