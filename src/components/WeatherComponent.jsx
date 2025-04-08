@@ -12,7 +12,7 @@ function WeatherComponent() {
       setError(null);
 
       try {
-        const response = await fetch(`/api/weather`);
+        const response = await fetch(`/api/weather?city=Salt%20Lake%20City`);
         if (!response.ok) {
           let message = `Weather API error! Status: ${response.status}`;
           try {

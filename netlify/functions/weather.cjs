@@ -4,7 +4,7 @@ exports.handler = async (event, context) => {
   const OPENWEATHERMAP_API_KEY = process.env.VITE_OPENWEATHERMAP_API_KEY;
   const OPENWEATHERMAP_BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
-  const { city } = "Salt Lake City";
+  const { city } = event.queryStringParameters;
 
   if (!city) {
     return {
