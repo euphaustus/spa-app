@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { fetchNasaApodData } from '../services/nasaApi';
 
 function NasaApod() {
   const [photoData, setPhotoData] = useState(null);
@@ -8,16 +7,29 @@ function NasaApod() {
 
   useEffect(() => {
     const loadPhotoData = async () => {
-      setLoading(true); 
-      setError(null);  
+      setLoading(true);
+      setError(null);
       try {
-        const data = await fetchNasaApodData();
+        const response = await fetch('/.netlify/functions/nasa-apod'); // Direct call to the function
+        if (!response.ok) {
+          let message = `NASA APOD API error! Status: ${response.status}`;
+          try {
+            const errorData = await response.json();
+            if (errorData && errorData.error) {
+              message += ` - ${errorData.error}`;
+            }
+          } catch (jsonError) {
+            console.error("Failed to parse error JSON from NASA APOD Function", jsonError);
+          }
+          throw new Error(message);
+        }
+        const data = await response.json();
         setPhotoData(data);
       } catch (apiError) {
-        setError(apiError.message || 'Failed to load NASA APOD'); 
-        console.error('Error in NasaApod component:', apiError); 
+        setError(apiError.message || 'Failed to load NASA APOD');
+        console.error('Error in NasaApod component:', apiError);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
@@ -31,7 +43,7 @@ function NasaApod() {
 
   return (
     <div className="nasa-apod">
-      <div className="nasa-apod-image-column"> 
+      <div className="nasa-apod-image-column">
         {photoData.media_type === 'image' ? (
           <img src={photoData.url} alt={photoData.title} />
         ) : (
