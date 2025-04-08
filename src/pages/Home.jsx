@@ -20,7 +20,7 @@ function Home() {
             </div>
 
             <div className='contentbox' id='weatherbox'>
-                <TestApiComponent/>
+                <WeatherComponent/>
             </div>
             <div className='contentbox' id='loginbox'>
                 <LoginForm/>
