@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import LoginForm from '../components/LoginForm';
 import NasaApod from '../components/NasaApod';
 import WeatherComponent from '../components/WeatherComponent';
+import TestApiComponent from '../components/TestApiComponent';
 
 
 
@@ -19,7 +20,7 @@ function Home() {
             </div>
 
             <div className='contentbox' id='weatherbox'>
-                <WeatherComponent/>
+                <TestApiComponent/>
             </div>
             <div className='contentbox' id='loginbox'>
                 <LoginForm/>
