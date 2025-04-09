@@ -19,6 +19,15 @@ exports.handler = async (event, context) => {
 
   if (event.httpMethod === 'GET') {
     try {
+      // Check if the file exists
+      if (!fsSync.existsSync(filePath)) {
+        console.log('Calendar data file not found, creating a new one.');
+        // Create the directory if it doesn't exist
+        if (!fsSync.existsSync(dataDir)) {
+          fsSync.mkdirSync(dataDir, { recursive: true });
+        }
+        await fs.writeFile(filePath, JSON.stringify({ events: [] }, null, 2), 'utf8');
+      }
       const rawData = await fs.readFile(filePath, 'utf8');
       const eventsData = JSON.parse(rawData);
       return {
@@ -26,15 +35,23 @@ exports.handler = async (event, context) => {
         body: JSON.stringify(eventsData),
       };
     } catch (error) {
-      console.error('Error reading calendar data:', error);
+      console.error('Error reading or creating calendar data:', error);
       return {
         statusCode: 500,
-        body: JSON.stringify({ message: 'Failed to read calendar data' }),
+        body: JSON.stringify({ message: 'Failed to read or create calendar data' }),
       };
     }
   } else if (event.httpMethod === 'POST') {
     try {
       const { title, date, time } = JSON.parse(event.body);
+      // Ensure the file exists before trying to read it for POST as well
+      if (!fsSync.existsSync(filePath)) {
+        // This should ideally be handled by the GET, but as a safeguard:
+        if (!fsSync.existsSync(dataDir)) {
+          fsSync.mkdirSync(dataDir, { recursive: true });
+        }
+        await fs.writeFile(filePath, JSON.stringify({ events: [] }, null, 2), 'utf8');
+      }
       const rawData = await fs.readFile(filePath, 'utf8');
       const eventsData = JSON.parse(rawData);
 
