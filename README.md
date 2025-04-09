@@ -9,6 +9,11 @@ netlify dev
 
 and that should start the client & server
 
+I included the .env file for this submission, specifically because it's meant to
+be run locally. It should work fine, but I included the link to the live deploy
+as well just in case you need it:
+https://boisterous-medovik-b28e78.netlify.app/
+
 
 Requirements for this submission:
 - complete instructions.txt or equivalent to run the code locally
@@ -18,8 +23,7 @@ Requirements for this submission:
     in progress, I'm working on refactoring right now
 
 - get the backend running on an EC2
-    the Netlify functions are set up and running, you can check the live deploy at
-    https://boisterous-medovik-b28e78.netlify.app/
+    the Netlify functions are set up and running, you can check the live deploy
     though there will be a couple of discrepencies until I get it hooked up to a database
 
 
