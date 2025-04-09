@@ -14,7 +14,7 @@ class UserRepository {
       fsSync.mkdirSync(dataDir, { recursive: true });
     }
     if (!fsSync.existsSync(this.dataFilePath)) {
-      fsSync.writeFileSync(this.dataFilePath, JSON.stringify([]), 'utf8'); // Initialize with an empty array if it doesn't exist
+      fsSync.writeFileSync(this.dataFilePath, JSON.stringify([]), 'utf8');
     }
   }
 

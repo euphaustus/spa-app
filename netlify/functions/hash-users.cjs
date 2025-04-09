@@ -3,7 +3,7 @@ const fs = require('fs').promises;
 const path = require('path');
 
 const saltRounds = 10;
-const usersFilePath = path.join(__dirname, 'data', 'users.json'); // Adjust path if needed
+const usersFilePath = path.join(__dirname, 'data', 'users.json');
 
 async function hashPasswords() {
   try {
@@ -16,7 +16,7 @@ async function hashPasswords() {
           const hashedPassword = await bcrypt.hash(user.password, saltRounds);
           return { ...user, password: hashedPassword };
         }
-        return user; // Password already hashed or not present
+        return user;
       })
     );
 
