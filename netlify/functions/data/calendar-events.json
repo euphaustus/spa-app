@@ -1,24 +1,16 @@
 {
   "events": [
     {
-      "date": "2025-04-15",
-      "time": "10:00",
-      "title": "Meeting with Client"
+      "id": "27852780-ce31-43a5-b14c-7ffce9e9b3de",
+      "title": "hello ghereh",
+      "date": "2025-04-10",
+      "time": "06:59"
     },
     {
-      "date": "2025-04-22",
-      "time": "14:30",
-      "title": "Project Deadline"
-    },
-    {
-      "title": "another thing",
-      "date": "2025-04-14",
-      "time": "10:30"
-    },
-    {
-      "title": "asdf",
-      "date": "2025-04-14",
-      "time": "05:56"
+      "id": "df555c7e-3c50-4654-a717-ab053d9ca26f",
+      "title": "asdflkhg",
+      "date": "2025-04-08",
+      "time": "06:58"
     }
   ]
 }

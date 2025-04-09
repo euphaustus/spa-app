@@ -1,11 +1,28 @@
-import React, { useState, useEffect, useCallback } from 'react'; // Import useCallback
+import React, { useState, useEffect, useCallback } from 'react';
 import CalendarDisplay from '../components/CalendarDisplay';
 import EventManager from '../components/EventManager';
 
 const Calendar = () => {
   const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedDateForAdd, setSelectedDateForAdd] = useState('');
 
-  // Use useCallback to memoize the fetchEvents function
+
+  const handleCalendarClick = useCallback((eventOrDate) => {
+    if (eventOrDate && eventOrDate.id) {
+      setSelectedEvent(eventOrDate);
+      setSelectedDateForAdd('');
+    } else if (eventOrDate instanceof Date) {
+      const isoDate = eventOrDate.toISOString().split('T')[0];
+      setSelectedDateForAdd(isoDate);
+      setSelectedEvent(null);
+    } else {
+      setSelectedEvent(null);
+      setSelectedDateForAdd('');
+    }
+  }, []);
+
+
   const fetchEvents = useCallback(() => {
     fetch('/.netlify/functions/calendar-data')
       .then(response => response.json())
@@ -18,8 +35,8 @@ const Calendar = () => {
   }, []);
 
   useEffect(() => {
-    fetchEvents(); // Fetch events when the component mounts
-  }, [fetchEvents]); // Depend on fetchEvents
+    fetchEvents();
+  }, [fetchEvents]);
 
   const pageStyle = {
     display: 'flex',
@@ -46,10 +63,14 @@ const Calendar = () => {
   return (
     <div style={pageStyle} className='contentbox'>
       <div style={calendarStyle}>
-        <CalendarDisplay events={events} />
+        <CalendarDisplay events={events} onCalendarClick={handleCalendarClick} />
       </div>
       <div style={eventManagerStyle}>
-        <EventManager onEventAdded={fetchEvents} /> {/* Pass fetchEvents as a prop */}
+        <EventManager
+          onEventAdded={fetchEvents}
+          selectedEvent={selectedEvent}
+          selectedDateForAdd={selectedDateForAdd} 
+        />
       </div>
     </div>
   );

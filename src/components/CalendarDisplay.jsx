@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CalendarDisplay = ({ events }) => {
+const CalendarDisplay = ({ events, onCalendarClick }) => {
   const divStyle = {
     width: '100%',
     height: '90%',
@@ -36,7 +36,7 @@ const CalendarDisplay = ({ events }) => {
 
     const today = new Date();
     const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth(); // 0-indexed month
+    const currentMonth = today.getMonth();
 
     while (daysArray.length) {
       const week = daysArray.splice(0, 7);
@@ -46,14 +46,12 @@ const CalendarDisplay = ({ events }) => {
     return weeks.map((week, weekIndex) => (
       <tr key={weekIndex}>
         {week.map((day, dayIndex) => {
-          // Create the date for the current cell
           const currentDate = new Date(currentYear, currentMonth, day);
+          const nextDay = new Date(currentDate);
+          nextDay.setDate(currentDate.getDate() + 1);
 
           const eventsForDay = events ? events.filter(event => {
             const eventDate = new Date(event.date);
-            const nextDay = new Date(currentDate);
-            nextDay.setDate(currentDate.getDate() - 1);
-
             return (
               eventDate.getFullYear() === nextDay.getFullYear() &&
               eventDate.getMonth() === nextDay.getMonth() &&
@@ -62,10 +60,21 @@ const CalendarDisplay = ({ events }) => {
           }) : [];
 
           return (
-            <td key={dayIndex} style={cellStyle}>
+            <td
+              key={dayIndex}
+              style={cellStyle}
+              onClick={() => onCalendarClick(currentDate)}
+            >
               {day}
               {eventsForDay.map((event, index) => (
-                <div key={index} style={{ marginTop: '5px', fontSize: '0.8em' }}>
+                <div
+                  key={index}
+                  style={{ marginTop: '5px', fontSize: '0.8em', cursor: 'pointer' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCalendarClick(event);
+                  }}
+                >
                   {event.time && `(${event.time}) `}
                   {event.title}
                 </div>

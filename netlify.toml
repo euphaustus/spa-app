@@ -1,5 +1,5 @@
 [functions]
   included_files = ["netlify/functions/data/**"]
   directory = "netlify/functions/"
-  node_bundler = "esbuild" # Optional, but often recommended for faster builds
-  environment = { NODE_VERSION = "18" } # Or a different supported version like "16" or "20"
+  node_bundler = "esbuild"
+  environment = { NODE_VERSION = "18" }

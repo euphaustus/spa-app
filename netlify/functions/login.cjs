@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const users = require('./users.json');
+const users = require('./data/users.json');
 
 exports.handler = async function(event, context) {
   if (event.httpMethod !== 'POST') {
