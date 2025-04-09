@@ -70,6 +70,7 @@ const Calendar = () => {
           onEventAdded={fetchEvents}
           selectedEvent={selectedEvent}
           selectedDateForAdd={selectedDateForAdd} 
+          clearSelectedEvent={() => setSelectedEvent(null)}
         />
       </div>
     </div>

@@ -16,7 +16,7 @@ dist-ssr
 public
 
 # .env
-.env.local
+
 
 
 
@@ -33,4 +33,4 @@ public
 *.sw?
 
 # Local Netlify folder
-.netlify
+

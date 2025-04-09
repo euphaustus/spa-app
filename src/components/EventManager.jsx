@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const EventManager = ({ onEventAdded, selectedEvent, selectedDateForAdd }) => {
+const EventManager = ({ onEventAdded, selectedEvent, selectedDateForAdd, clearSelectedEvent }) => {
   const [newEventTitle, setNewEventTitle] = useState('');
   const [newEventDate, setNewEventDate] = useState('');
   const [newEventTime, setNewEventTime] = useState('');
@@ -14,6 +14,10 @@ const EventManager = ({ onEventAdded, selectedEvent, selectedDateForAdd }) => {
       setNewEventTime(selectedEvent.time || '');
       setMessage('');
       setError('');
+    } else {
+      setNewEventTitle('');
+      setNewEventDate('');
+      setNewEventTime('');
     }
   }, [selectedEvent]);
 
@@ -29,13 +33,17 @@ const EventManager = ({ onEventAdded, selectedEvent, selectedDateForAdd }) => {
     setMessage('');
     setError('');
 
+    const method = selectedEvent ? 'PUT' : 'POST';
+    const url = '/.netlify/functions/calendar-data' + (selectedEvent ? `?id=${selectedEvent.id}` : '');
+
     try {
-      const response = await fetch('/.netlify/functions/calendar-data', {
-        method: 'POST',
+      const response = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          id: selectedEvent?.id, // Include ID in the body for consistency
           title: newEventTitle,
           date: newEventDate,
           time: newEventTime,
@@ -49,16 +57,18 @@ const EventManager = ({ onEventAdded, selectedEvent, selectedDateForAdd }) => {
         if (onEventAdded) {
           onEventAdded();
         }
+        if (selectedEvent) {
+          clearSelectedEvent(); // Clear selected event after saving
+        }
+        setNewEventTitle('');
+        setNewEventDate('');
+        setNewEventTime('');
       } else {
-        setError(data.message || 'Failed to add event.');
+        setError(data.message || 'Failed to save event.');
       }
-
-      setNewEventTitle('');
-      setNewEventDate('');
-      setNewEventTime('');
     } catch (err) {
-      setError('Error adding event: ' + err.message);
-      console.error('Error adding event:', err);
+      setError('Error saving event: ' + err.message);
+      console.error('Error saving event:', err);
     }
   };
 

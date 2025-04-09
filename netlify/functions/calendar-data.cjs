@@ -54,6 +54,34 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({ message: 'Failed to add calendar event' }),
       };
     }
+  } else if (event.httpMethod === 'PUT') {
+    try {
+      const { id, title, date, time } = JSON.parse(event.body);
+      const rawData = await fs.readFile(filePath, 'utf8');
+      const eventsData = JSON.parse(rawData);
+
+      const eventIndex = eventsData.events.findIndex(event => event.id === id);
+
+      if (eventIndex !== -1) {
+        eventsData.events[eventIndex] = { id, title, date, time };
+        await fs.writeFile(filePath, JSON.stringify(eventsData, null, 2), 'utf8');
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ message: 'Event updated successfully', event: eventsData.events[eventIndex] }),
+        };
+      } else {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ message: 'Event not found' }),
+        };
+      }
+    } catch (error) {
+      console.error('Error updating calendar event:', error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Failed to update calendar event' }),
+      };
+    }
   } else if (event.httpMethod === 'DELETE') {
     try {
       const { id } = JSON.parse(event.body);
