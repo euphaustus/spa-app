@@ -16,7 +16,7 @@ function LoginForm() {
       const userData = await login(username, password);
       console.log('Login successful in LoginForm!', userData);
       localStorage.setItem('authToken', userData.token);
- 
+      loginContext(userData.token);
     } catch (loginError) {
       setError(loginError.message);
       console.error('Login failed in LoginForm:', loginError);
