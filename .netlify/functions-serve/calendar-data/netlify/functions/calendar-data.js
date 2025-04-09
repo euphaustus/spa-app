@@ -586,27 +586,78 @@ var require_cjs = __commonJS({
   }
 });
 
+// netlify/functions/repositories/calendar-event-repository.cjs
+var require_calendar_event_repository = __commonJS({
+  "netlify/functions/repositories/calendar-event-repository.cjs"(exports2, module2) {
+    var fs = require("fs").promises;
+    var path2 = require("path");
+    var fsSync = require("fs");
+    var { v4: uuidv4 } = require_cjs();
+    var CalendarEventRepository2 = class {
+      constructor(dataFilePath) {
+        this.dataFilePath = dataFilePath;
+        this.ensureDataFileExists();
+      }
+      async ensureDataFileExists() {
+        const dataDir = path2.dirname(this.dataFilePath);
+        if (!fsSync.existsSync(dataDir)) {
+          fsSync.mkdirSync(dataDir, { recursive: true });
+        }
+        if (!fsSync.existsSync(this.dataFilePath)) {
+          fsSync.writeFileSync(this.dataFilePath, JSON.stringify({ events: [] }, null, 2), "utf8");
+        }
+      }
+      async getEvents() {
+        const rawData = await fs.readFile(this.dataFilePath, "utf8");
+        return JSON.parse(rawData).events;
+      }
+      async saveEvents(events) {
+        await fs.writeFile(this.dataFilePath, JSON.stringify({ events }, null, 2), "utf8");
+      }
+      async addEvent(event) {
+        const events = await this.getEvents();
+        const newEvent = { id: uuidv4(), ...event };
+        events.push(newEvent);
+        await this.saveEvents(events);
+        return newEvent;
+      }
+      async updateEvent(id, updatedEvent) {
+        const events = await this.getEvents();
+        const index = events.findIndex((event) => event.id === id);
+        if (index !== -1) {
+          events[index] = { id, ...updatedEvent };
+          await this.saveEvents(events);
+          return events[index];
+        }
+        return null;
+      }
+      async deleteEvent(id) {
+        const events = await this.getEvents();
+        const initialLength = events.length;
+        const updatedEvents = events.filter((event) => event.id !== id);
+        if (updatedEvents.length < initialLength) {
+          await this.saveEvents(updatedEvents);
+          return true;
+        }
+        return false;
+      }
+    };
+    module2.exports = CalendarEventRepository2;
+  }
+});
+
 // netlify/functions/calendar-data.cjs
-var fs = require("fs").promises;
 var path = require("path");
-var fsSync = require("fs");
-var { v4: uuidv4 } = require_cjs();
+var CalendarEventRepository = require_calendar_event_repository();
 exports.handler = async (event, context) => {
-  const filePath = path.join(process.cwd(), "netlify", "functions", "data", "calendar-events.json");
-  const dataDir = path.join(process.cwd(), "netlify", "functions", "data");
-  if (!fsSync.existsSync(dataDir)) {
-    fsSync.mkdirSync(dataDir, { recursive: true });
-  }
-  if (!fsSync.existsSync(filePath)) {
-    fsSync.writeFileSync(filePath, JSON.stringify({ events: [] }, null, 2), "utf8");
-  }
+  const dataFilePath = path.join(process.cwd(), "netlify", "functions", "data", "calendar-events.json");
+  const repository = new CalendarEventRepository(dataFilePath);
   if (event.httpMethod === "GET") {
     try {
-      const rawData = await fs.readFile(filePath, "utf8");
-      const eventsData = JSON.parse(rawData);
+      const events = await repository.getEvents();
       return {
         statusCode: 200,
-        body: JSON.stringify(eventsData)
+        body: JSON.stringify({ events })
       };
     } catch (error) {
       console.error("Error reading calendar data:", error);
@@ -617,35 +668,43 @@ exports.handler = async (event, context) => {
     }
   } else if (event.httpMethod === "POST") {
     try {
-      const { title, date, time } = JSON.parse(event.body);
-      const rawData = await fs.readFile(filePath, "utf8");
-      const eventsData = JSON.parse(rawData);
-      const newEvent = { id: uuidv4(), title, date, time };
-      eventsData.events.push(newEvent);
-      await fs.writeFile(filePath, JSON.stringify(eventsData, null, 2), "utf8");
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ message: "Event added successfully", event: newEvent })
-      };
-    } catch (error) {
-      console.error("Error adding calendar event:", error);
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ message: "Failed to add calendar event" })
-      };
-    }
-  } else if (event.httpMethod === "PUT") {
-    try {
-      const { id, title, date, time } = JSON.parse(event.body);
-      const rawData = await fs.readFile(filePath, "utf8");
-      const eventsData = JSON.parse(rawData);
-      const eventIndex = eventsData.events.findIndex((event2) => event2.id === id);
-      if (eventIndex !== -1) {
-        eventsData.events[eventIndex] = { id, title, date, time };
-        await fs.writeFile(filePath, JSON.stringify(eventsData, null, 2), "utf8");
+      const { title, date, time, id } = JSON.parse(event.body);
+      let resultEvent;
+      if (id) {
+        resultEvent = await repository.updateEvent(id, { title, date, time });
+        if (resultEvent) {
+          return {
+            statusCode: 200,
+            body: JSON.stringify({ message: "Event updated successfully", event: resultEvent })
+          };
+        } else {
+          return {
+            statusCode: 404,
+            body: JSON.stringify({ message: "Event not found" })
+          };
+        }
+      } else {
+        resultEvent = await repository.addEvent({ title, date, time });
         return {
           statusCode: 200,
-          body: JSON.stringify({ message: "Event updated successfully", event: eventsData.events[eventIndex] })
+          body: JSON.stringify({ message: "Event added successfully", event: resultEvent })
+        };
+      }
+    } catch (error) {
+      console.error("Error adding/updating calendar event:", error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: "Failed to add/update calendar event" })
+      };
+    }
+  } else if (event.httpMethod === "DELETE") {
+    try {
+      const { id } = JSON.parse(event.body);
+      const deleted = await repository.deleteEvent(id);
+      if (deleted) {
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ message: "Event removed successfully", id })
         };
       } else {
         return {
@@ -653,24 +712,6 @@ exports.handler = async (event, context) => {
           body: JSON.stringify({ message: "Event not found" })
         };
       }
-    } catch (error) {
-      console.error("Error updating calendar event:", error);
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ message: "Failed to update calendar event" })
-      };
-    }
-  } else if (event.httpMethod === "DELETE") {
-    try {
-      const { id } = JSON.parse(event.body);
-      const rawData = await fs.readFile(filePath, "utf8");
-      const eventsData = JSON.parse(rawData);
-      const updatedEvents = eventsData.events.filter((event2) => event2.id !== id);
-      await fs.writeFile(filePath, JSON.stringify({ events: updatedEvents }, null, 2), "utf8");
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ message: "Event removed successfully", id })
-      };
     } catch (error) {
       console.error("Error removing calendar event:", error);
       return {

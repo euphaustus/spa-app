@@ -47,15 +47,15 @@ const CalendarDisplay = ({ events, onCalendarClick }) => {
       <tr key={weekIndex}>
         {week.map((day, dayIndex) => {
           const currentDate = new Date(currentYear, currentMonth, day);
-          const nextDay = new Date(currentDate);
-          nextDay.setDate(currentDate.getDate() + 1);
+          const displayDate = new Date(currentDate);
+          displayDate.setDate(currentDate.getDate() - 1); // shift display in month for now
 
           const eventsForDay = events ? events.filter(event => {
             const eventDate = new Date(event.date);
             return (
-              eventDate.getFullYear() === nextDay.getFullYear() &&
-              eventDate.getMonth() === nextDay.getMonth() &&
-              eventDate.getDate() === nextDay.getDate()
+              eventDate.getFullYear() === displayDate.getFullYear() &&
+              eventDate.getMonth() === displayDate.getMonth() &&
+              eventDate.getDate() === displayDate.getDate()
             );
           }) : [];
 

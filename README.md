@@ -32,8 +32,9 @@ This is a personal digital display- like a personal home page. The home page on 
 
 Features implemented in this submission:
 - all API calls are implemented in the backend and are working locally and on the deploy
-- User authentication has been implemented, and I have a user list .json (to log in use testuser / password to view all pages)
-- my calendar is working, with the ability to add & remove events (locally)
+- User authentication has been implemented, and I have a user list .json (to log in use testuser / password)
+- additionally, passwords are all hashed inside the user list.
+- my calendar is working, with the ability to add & remove events (locally for now)
 
 Features I am currently working on:
 - my "today" page with the to-do list & a today calendar display

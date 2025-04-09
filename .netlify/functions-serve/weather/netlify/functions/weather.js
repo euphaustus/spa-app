@@ -6523,11 +6523,43 @@ var init_src = __esm({
   }
 });
 
+// netlify/functions/repositories/weather-repository.cjs
+var require_weather_repository = __commonJS({
+  "netlify/functions/repositories/weather-repository.cjs"(exports2, module2) {
+    var fetch2 = (...args) => Promise.resolve().then(() => (init_src(), src_exports)).then(({ default: fetch3 }) => fetch3(...args));
+    var WeatherRepository2 = class {
+      constructor(apiKey, baseUrl) {
+        this.apiKey = apiKey;
+        this.baseUrl = baseUrl;
+      }
+      async getWeather(city, units = "imperial") {
+        const url = `${this.baseUrl}?q=${city}&appid=${this.apiKey}&units=${units}`;
+        const response = await fetch2(url);
+        if (!response.ok) {
+          let message = `Weather API error! Status: ${response.status}`;
+          try {
+            const errorData = await response.json();
+            if (errorData && errorData.message) {
+              message += ` - ${errorData.message}`;
+            }
+          } catch (jsonError) {
+            console.error("Failed to parse error JSON from Weather API", jsonError);
+          }
+          throw new Error(message);
+        }
+        return response.json();
+      }
+    };
+    module2.exports = WeatherRepository2;
+  }
+});
+
 // netlify/functions/weather.cjs
-var fetch2 = (...args) => Promise.resolve().then(() => (init_src(), src_exports)).then(({ default: fetch3 }) => fetch3(...args));
+var WeatherRepository = require_weather_repository();
 exports.handler = async (event, context) => {
   const OPENWEATHERMAP_API_KEY = process.env.VITE_OPENWEATHERMAP_API_KEY;
   const OPENWEATHERMAP_BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
+  const weatherRepository = new WeatherRepository(OPENWEATHERMAP_API_KEY, OPENWEATHERMAP_BASE_URL);
   const { city } = event.queryStringParameters;
   if (!city) {
     return {
@@ -6536,35 +6568,17 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({ error: "A city name is required as a query parameter (e.g., ?city=London)." })
     };
   }
-  const url = `${OPENWEATHERMAP_BASE_URL}?q=${city}&appid=${OPENWEATHERMAP_API_KEY}&units=imperial`;
   try {
-    const response = await fetch2(url);
-    if (!response.ok) {
-      let message = `Weather API error! Status: ${response.status}`;
-      try {
-        const errorData = await response.json();
-        if (errorData && errorData.message) {
-          message += ` - ${errorData.message}`;
-        }
-      } catch (jsonError) {
-        console.error("Failed to parse error JSON from Weather API", jsonError);
-      }
-      return {
-        statusCode: response.status,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: message })
-      };
-    }
-    const data = await response.json();
+    const weatherData = await weatherRepository.getWeather(city);
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+      body: JSON.stringify(weatherData)
     };
   } catch (error) {
     console.error("Error fetching current weather data:", error);
     return {
-      statusCode: 500,
+      statusCode: error.message.includes("Weather API error") ? parseInt(error.message.split("Status: ")[1].split(" ")[0]) : 500,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ error: error.message })
     };

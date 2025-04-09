@@ -3780,57 +3780,78 @@ var require_jsonwebtoken = __commonJS({
   }
 });
 
-// netlify/functions/data/users.json
-var require_users = __commonJS({
-  "netlify/functions/data/users.json"(exports2, module2) {
-    module2.exports = [
-      {
-        username: "testuser",
-        password: "password"
-      },
-      {
-        username: "anotheruser",
-        password: "securepassword"
+// netlify/functions/repositories/user-repository.cjs
+var require_user_repository = __commonJS({
+  "netlify/functions/repositories/user-repository.cjs"(exports2, module2) {
+    var path2 = require("path");
+    var fs = require("fs").promises;
+    var fsSync = require("fs");
+    var UserRepository2 = class {
+      constructor(dataFilePath) {
+        this.dataFilePath = dataFilePath;
+        this.ensureDataFileExists();
       }
-    ];
+      ensureDataFileExists() {
+        const dataDir = path2.dirname(this.dataFilePath);
+        if (!fsSync.existsSync(dataDir)) {
+          fsSync.mkdirSync(dataDir, { recursive: true });
+        }
+        if (!fsSync.existsSync(this.dataFilePath)) {
+          fsSync.writeFileSync(this.dataFilePath, JSON.stringify([]), "utf8");
+        }
+      }
+      async getUsers() {
+        try {
+          const rawData = await fs.readFile(this.dataFilePath, "utf8");
+          return JSON.parse(rawData);
+        } catch (error) {
+          console.error("Error reading user data:", error);
+          return [];
+        }
+      }
+      async findUserByUsername(username) {
+        const users = await this.getUsers();
+        return users.find((user) => user.username === username);
+      }
+    };
+    module2.exports = UserRepository2;
   }
 });
 
 // netlify/functions/login.cjs
 var jwt = require_jsonwebtoken();
-var users = require_users();
+var path = require("path");
+var UserRepository = require_user_repository();
+var bcrypt = require("bcrypt");
 exports.handler = async function(event, context) {
   if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      body: "Method Not Allowed"
-    };
+    return { statusCode: 405, body: "Method Not Allowed" };
   }
   const { username, password } = JSON.parse(event.body);
-  const user = users.find((u) => u.username === username);
-  if (user && user.password === password) {
-    const userPayload = {
-      id: users.indexOf(user) + 1,
-      username: user.username
-    };
-    const secretKey = process.env.JWT_SECRET;
-    if (!secretKey) {
-      console.error("JWT_SECRET environment variable not set!");
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ message: "Server error: JWT secret not configured." })
-      };
+  const usersFilePath = path.join(__dirname, "data", "users.json");
+  const userRepository = new UserRepository(usersFilePath);
+  console.log("Attempting login for username:", username);
+  const user = await userRepository.findUserByUsername(username);
+  if (user) {
+    console.log("Found user:", user.username);
+    const isMatch = await bcrypt.compare(password, user.password);
+    console.log("Password match result:", isMatch);
+    if (isMatch) {
+      const allUsers = await userRepository.getUsers();
+      const userPayload = { id: allUsers.indexOf(user) + 1, username: user.username };
+      const secretKey = process.env.JWT_SECRET;
+      if (!secretKey) {
+        console.error("JWT_SECRET environment variable not set!");
+        return { statusCode: 500, body: JSON.stringify({ message: "Server error: JWT secret not configured." }) };
+      }
+      const token = jwt.sign(userPayload, secretKey, { expiresIn: "1h" });
+      return { statusCode: 200, body: JSON.stringify({ message: "Login successful", token }) };
+    } else {
+      return { statusCode: 401, body: JSON.stringify({ message: "Invalid username or password" }) };
     }
-    const token = jwt.sign(userPayload, secretKey, { expiresIn: "1h" });
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: "Login successful", token })
-    };
   } else {
-    return {
-      statusCode: 401,
-      body: JSON.stringify({ message: "Invalid username or password" })
-    };
+    console.log("User not found with username:", username);
+    return { statusCode: 401, body: JSON.stringify({ message: "Invalid username or password" }) };
   }
 };
 /*! Bundled license information:
