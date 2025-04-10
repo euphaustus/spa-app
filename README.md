@@ -23,8 +23,9 @@ Requirements for this submission:
     in progress, I'm working on refactoring right now
 
 - get the backend running on an EC2
-    the Netlify functions are set up and running, you can check the live deploy
-    though there will be a couple of discrepencies until I get it hooked up to a database
+    the Netlify functions are set up and running, you can check the live deploy.
+    However the calendar and to-do list are not editable until I get them onto a 
+    database
 
 
 Site description:
