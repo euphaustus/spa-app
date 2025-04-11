@@ -3,7 +3,12 @@ import React from 'react';
 const About = () => {
 
     const p1 = `
-        In essence, this is a personal digital display- Think something along the lines of a Google Nest Hub, or something similar. The home page has boxes (components) for a weather api, the neat little NASA image api, and a login form that unlocks the today and calendar pages. The background page just has a nice wallpaper that can be used to look pretty. The today page will have a to do list, a "today's events" style calendar view, and (maybe a little too ideally) a little traffic checker. The calendar page is a very simple month-view calendar.
+        In essence, this is a personal digital display- Think something along the lines of a 
+        Google Nest Hub, or something similar. The home page has components for a weather api,
+         the neat little NASA image api, and a login form that unlocks the today and calendar pages.
+          The background page just has a nice wallpaper that can be used to look pretty. The today page 
+          will have a to do list as well as a daily calendar view. The calendar page holds a month-style 
+          calendar, which I am working on getting connected to the daily calendar on the today page.
         `
     
     const p2 = `
@@ -15,7 +20,12 @@ const About = () => {
         and something that I will actually use outside of school.
         `
     const p3 = `
-        So far, I have the page layout decided and the login form set (to view the locked pages, the password is "hello", but you didn't hear it from me). I have a few simple events set up, like the self-hiding nav bar and the login form, but I also have a keydown event set for navigation between pages, just for fun. hitting 1-5 on the keyboard will jump pages, which I think is pretty neat. There is a lot of blank space, but that will be filled when we get to APIs in class.
+        So far, I have the page layout decided and the login form set (to view the locked pages, 
+        the username is "testuser" and the password is "password", but you didn't hear it from me). 
+        I have a few neat little tricks set up, like the self-hiding nav bar and the login form, as well as a keydown event set for 
+        navigation between pages, just for fun. hitting 1-5 on the keyboard will navigate through the site, which I think is a pretty 
+        cool trick. There are a couple things I still need to work out though, as the backend server data is not modifiable without
+         being connected to a database. Once I have that step figured out though, this should be a fully-featured and working site!
         `
 
 

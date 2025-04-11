@@ -1,0 +1,32 @@
+{
+    "todos": [
+      {
+        "id": "prepare-math-slides",
+        "task": "Prepare slides for Math Class"
+      },
+      {
+        "id": "review-science-notes",
+        "task": "Review notes for Science Meeting"
+      },
+      {
+        "id": "finalize-team-meeting-agenda",
+        "task": "Finalize agenda for Team Meeting"
+      },
+      {
+        "id": "practice-client-presentation",
+        "task": "Practice Client Presentation"
+      },
+      {
+        "id": "read-history-chapter",
+        "task": "Read chapter for History Lecture"
+      },
+      {
+        "id": "plan-project-review",
+        "task": "Plan talking points for Project Review"
+      },
+      {
+        "id": "pack-for-offsite-meeting",
+        "task": "Pack necessary materials for Offsite Meeting"
+      }
+    ]
+  }

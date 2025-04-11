@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import TodoList from '../components/TodoList';
 
 function Today() {
     
@@ -10,7 +11,7 @@ function Today() {
             </div>
 
             <div className='contentbox'>
-                <p>This shall be the great to do list, which will fill the "have a database" requirement</p>
+                <TodoList/>
             </div>
             <div className='contentbox'>
                 <p>Finally, the "Today" calendar</p>

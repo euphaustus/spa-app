@@ -1,22 +1,106 @@
 {
   "events": [
     {
-      "id": "27852780-ce31-43a5-b14c-7ffce9e9b3de",
-      "title": "hello ghereh",
+      "id": "school-mon-1",
+      "title": "Math Class",
+      "date": "2025-04-09",
+      "time": "09:00"
+    },
+    {
+      "id": "school-mon-2",
+      "title": "Travel to Campus",
+      "date": "2025-04-09",
+      "time": "10:30"
+    },
+    {
+      "id": "school-mon-3",
+      "title": "Science Meeting",
+      "date": "2025-04-09",
+      "time": "14:00"
+    },
+    {
+      "id": "office-tue-1",
+      "title": "Team Meeting",
+      "date": "2025-04-10",
+      "time": "10:00"
+    },
+    {
+      "id": "office-tue-2",
+      "title": "Client Presentation",
+      "date": "2025-04-10",
+      "time": "14:00"
+    },
+    {
+      "id": "office-tue-3",
+      "title": "Dinner with Friends",
+      "date": "2025-04-10",
+      "time": "19:00"
+    },
+    {
+      "id": "school-wed-1",
+      "title": "History Lecture",
+      "date": "2025-04-11",
+      "time": "11:00"
+    },
+    {
+      "id": "school-wed-2",
+      "title": "Study Group",
+      "date": "2025-04-11",
+      "time": "15:00"
+    },
+    {
+      "id": "office-thu-1",
+      "title": "Project Review",
+      "date": "2025-04-12",
+      "time": "09:30"
+    },
+    {
+      "id": "office-thu-2",
+      "title": "Travel to Offsite Meeting",
+      "date": "2025-04-12",
+      "time": "13:00"
+    },
+    {
+      "id": "office-thu-3",
+      "title": "Networking Dinner",
+      "date": "2025-04-12",
+      "time": "18:30"
+    },
+    {
+      "id": "school-fri-1",
+      "title": "Literature Seminar",
+      "date": "2025-04-13",
+      "time": "13:00"
+    },
+    {
+      "id": "weekend-sat-1",
+      "title": "Weekend Activity",
+      "date": "2025-04-14",
+      "time": "14:00"
+    },
+    {
+      "id": "test-three",
+      "title": "test three",
       "date": "2025-04-10",
       "time": "06:59"
     },
     {
-      "id": "df555c7e-3c50-4654-a717-ab053d9ca26f",
-      "title": "asdflkhg",
+      "id": "another-test",
+      "title": "another test",
       "date": "2025-04-09",
       "time": "06:58"
     },
     {
-      "id": "16f5adbf-cf42-4520-bc72-2aa565efe365",
+      "id": "testing",
       "title": "testing",
-      "date": "2025-04-13",
+      "date": "2025-04-15",
       "time": "05:00"
+    },
+    {
+      "id": "0cb67cbb-a736-4e2b-8a10-25a27ba2c2fb",
+      "title": "dev testing",
+      "date": "2025-04-15",
+      "time": ""
     }
   ]
 }

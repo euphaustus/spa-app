@@ -52,6 +52,28 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({ message: 'Failed to add/update calendar event' }),
       };
     }
+  } else if (event.httpMethod === 'PUT') {
+    try {
+      const { id, title, date, time } = JSON.parse(event.body);
+      const resultEvent = await repository.updateEvent(id, { title, date, time });
+      if (resultEvent) {
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ message: 'Event updated successfully', event: resultEvent }),
+        };
+      } else {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ message: 'Event not found' }),
+        };
+      }
+    } catch (error) {
+      console.error('Error updating calendar event via PUT:', error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Failed to update calendar event' }),
+      };
+    }
   } else if (event.httpMethod === 'DELETE') {
     try {
       const { id } = JSON.parse(event.body);
