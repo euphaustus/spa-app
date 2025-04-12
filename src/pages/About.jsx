@@ -20,12 +20,12 @@ const About = () => {
         and something that I will actually use outside of school.
         `
     const p3 = `
-        So far, I have the page layout decided and the login form set (to view the locked pages, 
-        the username is "testuser" and the password is "password", but you didn't hear it from me). 
-        I have a few neat little tricks set up, like the self-hiding nav bar and the login form, as well as a keydown event set for 
-        navigation between pages, just for fun. hitting 1-5 on the keyboard will navigate through the site, which I think is a pretty 
-        cool trick. There are a couple things I still need to work out though, as the backend server data is not modifiable without
-         being connected to a database. Once I have that step figured out though, this should be a fully-featured and working site!
+        At this point, my project is in a pretty good place. The home page is functional, with the weather and NASA image
+        loading correctly. The login form is working, and the today page is functional with a to do list and calendar view.
+        The calendar page is complete as well, with a usable caledar (you can go ahead and play around with it, the database
+        is connected to the whole site and should work just fine). The background page basically just has a nice wallpaper, but
+        it looks pretty. Overall, I'm happy with the progress I've made, and the site is now ready for a little more polish and
+        I'll be done!
         `
 
 
