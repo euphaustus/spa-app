@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { login } from '../services/auth';
-
 import {useAuth} from '../contexts/AuthContext';
 
 function LoginForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { login: loginContext } = useAuth();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError(null);
+    setIsLoading(true);
     try {
       const userData = await login(username, password);
       console.log('Login successful in LoginForm!', userData);
@@ -20,6 +21,8 @@ function LoginForm() {
     } catch (loginError) {
       setError(loginError.message);
       console.error('Login failed in LoginForm:', loginError);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -48,7 +51,9 @@ function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Logging in...' : 'Login'}
+        </button>
       </form>
     </div>
   );

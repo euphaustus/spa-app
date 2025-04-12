@@ -1,13 +1,19 @@
-const path = require('path');
-const TodoRepository = require('./repositories/todo-repository.cjs');
+const SupabaseToDoRepository = require('./repositories/todo-repository');
+const ToDoService = require('./services/todo-service');
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
 exports.handler = async (event, context) => {
-  const dataFilePath = path.join(process.cwd(), 'netlify', 'functions', 'data', 'todos.json');
-  const repository = new TodoRepository(dataFilePath);
+  const toDoRepository = new SupabaseToDoRepository(supabaseUrl, supabaseKey);
+  const toDoService = new ToDoService(toDoRepository);
 
   if (event.httpMethod === 'GET') {
     try {
-      const todos = await repository.getTodos();
+      const todos = await toDoService.getTodos();
+      if (todos === null) {
+        return { statusCode: 500, body: JSON.stringify({ message: 'Failed to read todos' }) };
+      }
       return {
         statusCode: 200,
         body: JSON.stringify({ todos }),
@@ -21,12 +27,19 @@ exports.handler = async (event, context) => {
     }
   } else if (event.httpMethod === 'POST') {
     try {
-      const { task, description } = JSON.parse(event.body);
-      const newTodo = await repository.addTodo({ task, description: '' });
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ message: 'Todo added successfully', todo: newTodo }),
-      };
+      const { task, description, completed } = JSON.parse(event.body);
+      const newTodo = await toDoService.addTodo({ task, description, completed });
+      if (newTodo) {
+        return {
+          statusCode: 201, // Use 201 Created for successful POST requests
+          body: JSON.stringify({ message: 'Todo added successfully', todo: newTodo }),
+        };
+      } else {
+        return {
+          statusCode: 500,
+          body: JSON.stringify({ message: 'Failed to add todo' }),
+        };
+      }
     } catch (error) {
       console.error('Error adding todo:', error);
       return {
@@ -34,11 +47,10 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({ message: 'Failed to add todo' }),
       };
     }
-    
   } else if (event.httpMethod === 'PUT') {
     try {
-      const { id, task, description } = JSON.parse(event.body);
-      const updatedTodo = await repository.updateTodo(id, { task, description });
+      const { id, task, description, completed } = JSON.parse(event.body);
+      const updatedTodo = await toDoService.updateTodo(id, { task, description, completed });
       if (updatedTodo) {
         return {
           statusCode: 200,
@@ -60,14 +72,11 @@ exports.handler = async (event, context) => {
   } else if (event.httpMethod === 'DELETE') {
     try {
       const { id } = JSON.parse(event.body);
-      const todos = await repository.getTodos();
-      const index = todos.findIndex(todo => todo.id === id);
-      if (index !== -1) {
-        todos.splice(index, 1);
-        await repository.saveTodos(todos);
+      const deleted = await toDoService.deleteTodo(id);
+      if (deleted) {
         return {
           statusCode: 200,
-          body: JSON.stringify({ message: 'Todo deleted successfully' }),
+          body: JSON.stringify({ message: 'Todo removed successfully' }),
         };
       } else {
         return {
@@ -76,14 +85,13 @@ exports.handler = async (event, context) => {
         };
       }
     } catch (error) {
-      console.error('Error deleting todo:', error);
+      console.error('Error removing todo:', error);
       return {
         statusCode: 500,
         body: JSON.stringify({ message: 'Failed to delete todo' }),
       };
     }
-  }
-  else {
+  } else {
     return {
       statusCode: 405,
       body: 'Method Not Allowed',

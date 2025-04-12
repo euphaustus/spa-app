@@ -1,51 +1,84 @@
-const fs = require('fs').promises;
-const path = require('path');
-const fsSync = require('fs');
-const { v4: uuidv4 } = require('uuid');
+const { createClient } = require('@supabase/supabase-js');
 
-class TodoRepository {
-  constructor(dataFilePath) {
-    this.dataFilePath = dataFilePath;
-    this.ensureDataFileExists();
-  }
-
-  ensureDataFileExists() {
-    const dataDir = path.dirname(this.dataFilePath);
-    if (!fsSync.existsSync(dataDir)) {
-      fsSync.mkdirSync(dataDir, { recursive: true });
-    }
-    if (!fsSync.existsSync(this.dataFilePath)) {
-      fsSync.writeFileSync(this.dataFilePath, JSON.stringify({ todos: [] }, null, 2), 'utf8');
-    }
+class SupabaseToDoRepository {
+  constructor(supabaseUrl, supabaseKey) {
+    this.supabaseUrl = supabaseUrl;
+    this.supabaseKey = supabaseKey;
   }
 
   async getTodos() {
-    const rawData = await fs.readFile(this.dataFilePath, 'utf8');
-    return JSON.parse(rawData).todos;
-  }
-
-  async saveTodos(todos) {
-    await fs.writeFile(this.dataFilePath, JSON.stringify({ todos }, null, 2), 'utf8');
-  }
-
-  async addTodo(todo, description = '') {
-    const todos = await this.getTodos();
-    const newTodo = { id: uuidv4(), completed: false, description: '', ...todo };
-    todos.push(newTodo);
-    await this.saveTodos(todos);
-    return newTodo;
-  }
-
-  async updateTodo(id, updatedTodo) {
-    const todos = await this.getTodos();
-    const index = todos.findIndex(todo => todo.id === id);
-    if (index !== -1) {
-      todos[index] = { ...todos[index], ...updatedTodo };
-      await this.saveTodos(todos);
-      return todos[index];
+    const supabase = createClient(this.supabaseUrl, this.supabaseKey);
+    try {
+      const { data: todos, error } = await supabase
+        .from('todo')
+        .select('*');
+      if (error) {
+        console.error('Error fetching todos from Supabase:', error);
+        return null;
+      }
+      return todos;
+    } catch (error) {
+      console.error('An unexpected error occurred in getTodos:', error);
+      return null;
     }
-    return null;
+  }
+
+  async addTodo(todo) {
+    const supabase = createClient(this.supabaseUrl, this.supabaseKey);
+    try {
+      const { data: newTodo, error } = await supabase
+        .from('todo')
+        .insert([todo])
+        .select()
+        .single();
+      if (error) {
+        console.error('Error adding todo to Supabase:', error);
+        return null;
+      }
+      return newTodo;
+    } catch (error) {
+      console.error('An unexpected error occurred in addTodo:', error);
+      return null;
+    }
+  }
+
+  async updateTodo(id, todo) {
+    const supabase = createClient(this.supabaseUrl, this.supabaseKey);
+    try {
+      const { data: updatedTodo, error } = await supabase
+        .from('todo')
+        .update(todo)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) {
+        console.error('Error updating todo in Supabase:', error);
+        return null;
+      }
+      return updatedTodo;
+    } catch (error) {
+      console.error('An unexpected error occurred in updateTodo:', error);
+      return null;
+    }
+  }
+
+  async deleteTodo(id) {
+    const supabase = createClient(this.supabaseUrl, this.supabaseKey);
+    try {
+      const { error } = await supabase
+        .from('todo')
+        .delete()
+        .eq('id', id);
+      if (error) {
+        console.error('Error deleting todo from Supabase:', error);
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('An unexpected error occurred in deleteTodo:', error);
+      return false;
+    }
   }
 }
 
-module.exports = TodoRepository;
+module.exports = SupabaseToDoRepository;

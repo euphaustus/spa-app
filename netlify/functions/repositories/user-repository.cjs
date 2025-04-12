@@ -1,37 +1,31 @@
-const path = require('path');
-const fs = require('fs').promises;
-const fsSync = require('fs');
+const { createClient } = require('@supabase/supabase-js');
 
-class UserRepository {
-  constructor(dataFilePath) {
-    this.dataFilePath = dataFilePath;
-    this.ensureDataFileExists();
-  }
-
-  ensureDataFileExists() {
-    const dataDir = path.dirname(this.dataFilePath);
-    if (!fsSync.existsSync(dataDir)) {
-      fsSync.mkdirSync(dataDir, { recursive: true });
-    }
-    if (!fsSync.existsSync(this.dataFilePath)) {
-      fsSync.writeFileSync(this.dataFilePath, JSON.stringify([]), 'utf8');
-    }
-  }
-
-  async getUsers() {
-    try {
-      const rawData = await fs.readFile(this.dataFilePath, 'utf8');
-      return JSON.parse(rawData);
-    } catch (error) {
-      console.error('Error reading user data:', error);
-      return [];
-    }
+class SupabaseUserRepository {
+  constructor(supabaseUrl, supabaseKey) {
+    this.supabaseUrl = supabaseUrl;
+    this.supabaseKey = supabaseKey;
   }
 
   async findUserByUsername(username) {
-    const users = await this.getUsers();
-    return users.find(user => user.username === username);
+    const supabase = createClient(this.supabaseUrl, this.supabaseKey);
+
+    try {
+      const { data: users, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('username', username);
+
+      if (error) {
+        console.error('Error fetching user from Supabase:', error);
+        return null;
+      }
+
+      return users && users.length > 0 ? users[0] : null;
+    } catch (error) {
+      console.error('An unexpected error occurred in UserRepository:', error);
+      return null;
+    }
   }
 }
 
-module.exports = UserRepository;
+module.exports = SupabaseUserRepository;

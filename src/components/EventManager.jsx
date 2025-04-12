@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { addCalendarEvent, updateCalendarEvent, deleteCalendarEvent } from '../services/calendarService'; // Import service functions
 
 const EventManager = ({ onEventAdded, selectedEvent, selectedDateForAdd, clearSelectedEvent }) => {
   const [newEventTitle, setNewEventTitle] = useState('');
@@ -9,6 +10,7 @@ const EventManager = ({ onEventAdded, selectedEvent, selectedDateForAdd, clearSe
 
   useEffect(() => {
     if (selectedEvent) {
+      console.log('Selected Event:', selectedEvent);
       setNewEventTitle(selectedEvent.title || '');
       setNewEventDate(selectedEvent.date || '');
       setNewEventTime(selectedEvent.time || '');
@@ -33,38 +35,34 @@ const EventManager = ({ onEventAdded, selectedEvent, selectedDateForAdd, clearSe
     setMessage('');
     setError('');
 
-    const method = selectedEvent ? 'PUT' : 'POST';
-    const url = '/.netlify/functions/calendar-data' + (selectedEvent ? `?id=${selectedEvent.id}` : '');
+    const eventData = {
+      title: newEventTitle,
+      date: newEventDate,
+      time: newEventTime,
+    };
 
     try {
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: selectedEvent?.id, // Include ID in the body for consistency
-          title: newEventTitle,
-          date: newEventDate,
-          time: newEventTime,
-        }),
-      });
+      let savedEvent;
+      if (selectedEvent) {
+        savedEvent = await updateCalendarEvent({ ...eventData, id: selectedEvent.id });
+        setMessage('Event updated successfully');
+      } else {
+        savedEvent = await addCalendarEvent(eventData);
+        setMessage('Event added successfully');
+      }
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage(data.message);
+      if (savedEvent) {
         if (onEventAdded) {
           onEventAdded();
         }
         if (selectedEvent) {
-          clearSelectedEvent(); // Clear selected event after saving
+          clearSelectedEvent();
         }
         setNewEventTitle('');
         setNewEventDate('');
         setNewEventTime('');
       } else {
-        setError(data.message || 'Failed to save event.');
+        setError('Failed to save event.');
       }
     } catch (err) {
       setError('Error saving event: ' + err.message);
@@ -82,18 +80,9 @@ const EventManager = ({ onEventAdded, selectedEvent, selectedDateForAdd, clearSe
     setError('');
 
     try {
-      const response = await fetch('/.netlify/functions/calendar-data', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id: selectedEvent.id }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage(data.message);
+      const deletedId = await deleteCalendarEvent(selectedEvent.id);
+      if (deletedId) {
+        setMessage('Event removed successfully');
         if (onEventAdded) {
           onEventAdded();
         }
@@ -101,7 +90,7 @@ const EventManager = ({ onEventAdded, selectedEvent, selectedDateForAdd, clearSe
         setNewEventDate('');
         setNewEventTime('');
       } else {
-        setError(data.message || 'Failed to remove event.');
+        setError('Failed to remove event.');
       }
     } catch (err) {
       setError('Error removing event: ' + err.message);

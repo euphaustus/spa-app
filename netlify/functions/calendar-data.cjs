@@ -1,13 +1,19 @@
-const path = require('path');
-const CalendarEventRepository = require('./repositories/calendar-event-repository');
+const SupabaseCalendarEventRepository = require('./repositories/calendar-event-repository');
+const CalendarEventService = require('./services/calendar-event-service');
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
 exports.handler = async (event, context) => {
-  const dataFilePath = path.join(process.cwd(), 'netlify', 'functions', 'data', 'calendar-events.json');
-  const repository = new CalendarEventRepository(dataFilePath);
+  const calendarEventRepository = new SupabaseCalendarEventRepository(supabaseUrl, supabaseKey);
+  const calendarEventService = new CalendarEventService(calendarEventRepository);
 
   if (event.httpMethod === 'GET') {
     try {
-      const events = await repository.getEvents();
+      const events = await calendarEventService.getEvents();
+      if (events === null) {
+        return { statusCode: 500, body: JSON.stringify({ message: 'Failed to read calendar data' }) };
+      }
       return {
         statusCode: 200,
         body: JSON.stringify({ events }),
@@ -21,15 +27,14 @@ exports.handler = async (event, context) => {
     }
   } else if (event.httpMethod === 'POST') {
     try {
-      const { title, date, time, id } = JSON.parse(event.body);
-      let resultEvent;
-      if (id) {
-        // Update existing event
-        resultEvent = await repository.updateEvent(id, { title, date, time });
-        if (resultEvent) {
+      const eventData = JSON.parse(event.body);
+      let result;
+      if (eventData.id) {
+        result = await calendarEventService.updateEvent(eventData.id, eventData);
+        if (result) {
           return {
             statusCode: 200,
-            body: JSON.stringify({ message: 'Event updated successfully', event: resultEvent }),
+            body: JSON.stringify({ message: 'Event updated successfully', event: result }),
           };
         } else {
           return {
@@ -38,12 +43,18 @@ exports.handler = async (event, context) => {
           };
         }
       } else {
-        // Add new event
-        resultEvent = await repository.addEvent({ title, date, time });
-        return {
-          statusCode: 200,
-          body: JSON.stringify({ message: 'Event added successfully', event: resultEvent }),
-        };
+        result = await calendarEventService.addEvent(eventData);
+        if (result) {
+          return {
+            statusCode: 200,
+            body: JSON.stringify({ message: 'Event added successfully', event: result }),
+          };
+        } else {
+          return {
+            statusCode: 500,
+            body: JSON.stringify({ message: 'Failed to add calendar event' }),
+          };
+        }
       }
     } catch (error) {
       console.error('Error adding/updating calendar event:', error);
@@ -54,12 +65,15 @@ exports.handler = async (event, context) => {
     }
   } else if (event.httpMethod === 'PUT') {
     try {
-      const { id, title, date, time } = JSON.parse(event.body);
-      const resultEvent = await repository.updateEvent(id, { title, date, time });
-      if (resultEvent) {
+      const eventData = JSON.parse(event.body);
+      if (!eventData.id) {
+        return { statusCode: 400, body: JSON.stringify({ message: 'Missing event ID for update' }) };
+      }
+      const result = await calendarEventService.updateEvent(eventData.id, eventData);
+      if (result) {
         return {
           statusCode: 200,
-          body: JSON.stringify({ message: 'Event updated successfully', event: resultEvent }),
+          body: JSON.stringify({ message: 'Event updated successfully', event: result }),
         };
       } else {
         return {
@@ -77,7 +91,7 @@ exports.handler = async (event, context) => {
   } else if (event.httpMethod === 'DELETE') {
     try {
       const { id } = JSON.parse(event.body);
-      const deleted = await repository.deleteEvent(id);
+      const deleted = await calendarEventService.deleteEvent(id);
       if (deleted) {
         return {
           statusCode: 200,

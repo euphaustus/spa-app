@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import CalendarDisplay from '../components/CalendarDisplay';
 import EventManager from '../components/EventManager';
+import { getCalendarEvents } from '../services/calendarService';
 
 const Calendar = () => {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDateForAdd, setSelectedDateForAdd] = useState('');
-
 
   const handleCalendarClick = useCallback((eventOrDate) => {
     if (eventOrDate && eventOrDate.id) {
@@ -22,14 +22,10 @@ const Calendar = () => {
     }
   }, []);
 
-
   const fetchEvents = useCallback(() => {
-    fetch('/.netlify/functions/calendar-data')
-      .then(response => response.json())
-      .then(data => {
-        if (data && data.events) {
-          setEvents(data.events);
-        }
+    getCalendarEvents()
+      .then(eventsData => {
+        setEvents(eventsData);
       })
       .catch(error => console.error('Error fetching calendar data:', error));
   }, []);
@@ -69,7 +65,7 @@ const Calendar = () => {
         <EventManager
           onEventAdded={fetchEvents}
           selectedEvent={selectedEvent}
-          selectedDateForAdd={selectedDateForAdd} 
+          selectedDateForAdd={selectedDateForAdd}
           clearSelectedEvent={() => setSelectedEvent(null)}
         />
       </div>

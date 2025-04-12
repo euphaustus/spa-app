@@ -1,62 +1,85 @@
-const fs = require('fs').promises;
-const path = require('path');
-const fsSync = require('fs');
-const { v4: uuidv4 } = require('uuid');
+const { createClient } = require('@supabase/supabase-js');
 
-class CalendarEventRepository {
-  constructor(dataFilePath) {
-    this.dataFilePath = dataFilePath;
-    this.ensureDataFileExists();
-  }
-
-  async ensureDataFileExists() {
-    const dataDir = path.dirname(this.dataFilePath);
-    if (!fsSync.existsSync(dataDir)) {
-      fsSync.mkdirSync(dataDir, { recursive: true });
-    }
-    if (!fsSync.existsSync(this.dataFilePath)) {
-      fsSync.writeFileSync(this.dataFilePath, JSON.stringify({ events: [] }, null, 2), 'utf8');
-    }
+class SupabaseCalendarEventRepository {
+  constructor(supabaseUrl, supabaseKey) {
+    this.supabaseUrl = supabaseUrl;
+    this.supabaseKey = supabaseKey;
   }
 
   async getEvents() {
-    const rawData = await fs.readFile(this.dataFilePath, 'utf8');
-    return JSON.parse(rawData).events;
-  }
-
-  async saveEvents(events) {
-    await fs.writeFile(this.dataFilePath, JSON.stringify({ events }, null, 2), 'utf8');
+    const supabase = createClient(this.supabaseUrl, this.supabaseKey);
+    try {
+      const { data: events, error } = await supabase
+        .from('events')
+        .select('*')
+        .order('date', { ascending: true })
+        .order('time', { ascending: true });
+      if (error) {
+        console.error('Error fetching events from Supabase:', error);
+        return null;
+      }
+      return events;
+    } catch (error) {
+      console.error('An unexpected error occurred in getEvents:', error);
+      return null;
+    }
   }
 
   async addEvent(event) {
-    const events = await this.getEvents();
-    const newEvent = { id: uuidv4(), ...event };
-    events.push(newEvent);
-    await this.saveEvents(events);
-    return newEvent;
+    const supabase = createClient(this.supabaseUrl, this.supabaseKey);
+    try {
+      const { data: newEvent, error } = await supabase
+        .from('events')
+        .insert([event])
+        .select()
+        .single();
+      if (error) {
+        console.error('Error adding event to Supabase:', error);
+        return null;
+      }
+      return newEvent;
+    } catch (error) {
+      console.error('An unexpected error occurred in addEvent:', error);
+      return null;
+    }
   }
 
-  async updateEvent(id, updatedEvent) {
-    const events = await this.getEvents();
-    const index = events.findIndex(event => event.id === id);
-    if (index !== -1) {
-      events[index] = { id, ...updatedEvent };
-      await this.saveEvents(events);
-      return events[index];
+  async updateEvent(id, event) {
+    const supabase = createClient(this.supabaseUrl, this.supabaseKey);
+    try {
+      const { data: updatedEvent, error } = await supabase
+        .from('events')
+        .update(event)
+        .eq('id', id)
+        .select();
+      if (error) {
+        console.error('Error updating event in Supabase:', error);
+        return null;
+      }
+      return updatedEvent;
+    } catch (error) {
+      console.error('An unexpected error occurred in updateEvent:', error);
+      return null;
     }
-    return null;
   }
 
   async deleteEvent(id) {
-    const events = await this.getEvents();
-    const initialLength = events.length;
-    const updatedEvents = events.filter(event => event.id !== id);
-    if (updatedEvents.length < initialLength) {
-      await this.saveEvents(updatedEvents);
+    const supabase = createClient(this.supabaseUrl, this.supabaseKey);
+    try {
+      const { error } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', id);
+      if (error) {
+        console.error('Error deleting event from Supabase:', error);
+        return false;
+      }
       return true;
+    } catch (error) {
+      console.error('An unexpected error occurred in deleteEvent:', error);
+      return false;
     }
-    return false;
   }
 }
 
-module.exports = CalendarEventRepository;
+module.exports = SupabaseCalendarEventRepository;

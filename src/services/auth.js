@@ -1,8 +1,6 @@
-const NETLIFY_FUNCTIONS_BASE_URL = '/.netlify/functions';
-
 export async function login(username, password) {
   try {
-    const response = await fetch(`${NETLIFY_FUNCTIONS_BASE_URL}/login`, {
+    const response = await fetch(`/.netlify/functions/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -16,7 +14,7 @@ export async function login(username, password) {
     }
 
     const data = await response.json();
-    return data; // This will now contain the JWT in the 'token' field
+    return data;
   } catch (error) {
     console.error('Error during login:', error);
     throw error;
