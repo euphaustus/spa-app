@@ -33,11 +33,12 @@ This is a personal digital display- like a personal home page. The home page on 
 
 Features implemented in this submission:
 - all API calls are implemented in the backend and are working locally and on the deploy
-- User authentication has been implemented, and I have a user list .json (to log in use testuser / password)
+- User authentication has been implemented, and I have a user list .json (to log
+    in use testuser / password)
 - additionally, passwords are all hashed inside the user list.
-- my calendar is working, with the ability to add & remove events (locally for now)
+- my calendar is working and dynamic to the current date, with the ability to add
+    & remove events (locally till we add database)
 - A proper to do list, to go along with the calendar
-
-Features I am currently working on / not complete:
-- the monthly calendar view is not dynamic, and only shows a set month. That's last on the list right now
+- Today's events view in the Today page, pulling from the monthly calendar. Add
+    an event there and it will show on this view as well
 
