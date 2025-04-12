@@ -6,15 +6,13 @@ function Today() {
     
     return (
         <div className="todaypagebox">
-            <div className='contentbox'>
-                <p>Here goes traffic data, as long as a good api exists</p>
-            </div>
+
 
             <div className='contentbox'>
                 <TodoList/>
             </div>
             <div className='contentbox'>
-                <p>Finally, the "Today" calendar</p>
+                <p>Last thing to implement that I'm missing, the "Today" calendar</p>
             </div>
 
         </div>

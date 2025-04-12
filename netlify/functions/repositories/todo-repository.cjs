@@ -28,12 +28,23 @@ class TodoRepository {
     await fs.writeFile(this.dataFilePath, JSON.stringify({ todos }, null, 2), 'utf8');
   }
 
-  async addTodo(todo) {
+  async addTodo(todo, description = '') {
     const todos = await this.getTodos();
-    const newTodo = { id: uuidv4(), ...todo };
+    const newTodo = { id: uuidv4(), completed: false, description: '', ...todo };
     todos.push(newTodo);
     await this.saveTodos(todos);
     return newTodo;
+  }
+
+  async updateTodo(id, updatedTodo) {
+    const todos = await this.getTodos();
+    const index = todos.findIndex(todo => todo.id === id);
+    if (index !== -1) {
+      todos[index] = { ...todos[index], ...updatedTodo };
+      await this.saveTodos(todos);
+      return todos[index];
+    }
+    return null;
   }
 }
 

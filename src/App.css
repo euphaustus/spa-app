@@ -56,8 +56,6 @@ body {
   width: 100%;
 }
 
-
-
 .homepagebox {
     display: grid;
     width: 100%;
@@ -70,7 +68,7 @@ body {
     display: grid;
     width: 100%;
     height: 100%;
-    grid-template-columns: 1fr 2fr 1fr
+    grid-template-columns: 2fr 1fr
 }
 
 .contentbox {
@@ -99,10 +97,6 @@ body {
 
 .homepagebox .contentbox:nth-child(3) {
   grid-column: 2;
-}
-
-#nasabox {
-
 }
 
 .nasa-apod {
@@ -153,14 +147,6 @@ body {
 .nasa-apod .explanation {
   font-size: 0.8em;
   text-align: justify;
-}
-
-#weatherbox {
-
-}
-
-#loginbox {
-
 }
 
 #aboutbox {

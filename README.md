@@ -36,8 +36,8 @@ Features implemented in this submission:
 - User authentication has been implemented, and I have a user list .json (to log in use testuser / password)
 - additionally, passwords are all hashed inside the user list.
 - my calendar is working, with the ability to add & remove events (locally for now)
+- A proper to do list, to go along with the calendar
 
-Features I am currently working on:
-- my "today" page with the to-do list & a today calendar display
+Features I am currently working on / not complete:
 - the monthly calendar view is not dynamic, and only shows a set month. That's last on the list right now
 

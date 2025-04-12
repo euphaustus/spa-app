@@ -1,7 +1,7 @@
 {
   "version": 3,
   "sources": ["../../../../School/3660/project/spa-app/netlify/functions/hello.cjs"],
-  "sourceRoot": "C:/Users/Evin/AppData/Local/Temp/tmp-5668-9G5iimF0frOh",
+  "sourceRoot": "C:/Users/Evin/AppData/Local/Temp/tmp-14092-YSp731nb7H9x",
   "sourcesContent": ["// netlify/functions/hello.js\r\nexports.handler = async (event, context) => {\r\n  return {\r\n    statusCode: 200,\r\n    headers: {\r\n      \"Content-Type\": \"application/json\",\r\n    },\r\n    body: JSON.stringify({ message: \"Hello from Netlify Function (CommonJS)!\" }),\r\n  };\r\n};"],
   "mappings": ";AACA,QAAQ,UAAU,OAAO,OAAO,YAAY;AAC1C,SAAO;AAAA,IACL,YAAY;AAAA,IACZ,SAAS;AAAA,MACP,gBAAgB;AAAA,IAClB;AAAA,IACA,MAAM,KAAK,UAAU,EAAE,SAAS,0CAA0C,CAAC;AAAA,EAC7E;AACF;",
   "names": []

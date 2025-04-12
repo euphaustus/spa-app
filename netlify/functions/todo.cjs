@@ -21,8 +21,8 @@ exports.handler = async (event, context) => {
     }
   } else if (event.httpMethod === 'POST') {
     try {
-      const { task } = JSON.parse(event.body);
-      const newTodo = await repository.addTodo({ task });
+      const { task, description } = JSON.parse(event.body);
+      const newTodo = await repository.addTodo({ task, description: '' });
       return {
         statusCode: 200,
         body: JSON.stringify({ message: 'Todo added successfully', todo: newTodo }),
@@ -34,7 +34,56 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({ message: 'Failed to add todo' }),
       };
     }
-  } else {
+    
+  } else if (event.httpMethod === 'PUT') {
+    try {
+      const { id, task, description } = JSON.parse(event.body);
+      const updatedTodo = await repository.updateTodo(id, { task, description });
+      if (updatedTodo) {
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ message: 'Todo updated successfully', todo: updatedTodo }),
+        };
+      } else {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ message: 'Todo not found' }),
+        };
+      }
+    } catch (error) {
+      console.error('Error updating todo:', error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Failed to update todo' }),
+      };
+    }
+  } else if (event.httpMethod === 'DELETE') {
+    try {
+      const { id } = JSON.parse(event.body);
+      const todos = await repository.getTodos();
+      const index = todos.findIndex(todo => todo.id === id);
+      if (index !== -1) {
+        todos.splice(index, 1);
+        await repository.saveTodos(todos);
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ message: 'Todo deleted successfully' }),
+        };
+      } else {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ message: 'Todo not found' }),
+        };
+      }
+    } catch (error) {
+      console.error('Error deleting todo:', error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Failed to delete todo' }),
+      };
+    }
+  }
+  else {
     return {
       statusCode: 405,
       body: 'Method Not Allowed',
