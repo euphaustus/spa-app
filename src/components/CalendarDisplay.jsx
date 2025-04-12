@@ -30,32 +30,51 @@ const CalendarDisplay = ({ events, onCalendarClick }) => {
   };
 
   const generateCalendarRows = () => {
-    const daysInMonth = 30; // This will eventually be dynamic
-    const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-    const weeks = [];
-
     const today = new Date();
     const currentYear = today.getFullYear();
     const currentMonth = today.getMonth();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+    const startingDayOfWeek = firstDayOfMonth.getDay();
+    const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+    const weeks = [];
+    let currentDay = 1;
+    let week = [];
 
-    while (daysArray.length) {
-      const week = daysArray.splice(0, 7);
-      weeks.push(week);
+ 
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      week.push(null);
+    }
+
+    while (currentDay <= daysInMonth) {
+      week.push(currentDay);
+      if (week.length === 7 || currentDay === daysInMonth) {
+        weeks.push(week);
+        week = [];
+      }
+      currentDay++;
+    }
+
+
+    while (weeks[weeks.length - 1].length < 7) {
+      weeks[weeks.length - 1].push(null);
     }
 
     return weeks.map((week, weekIndex) => (
       <tr key={weekIndex}>
         {week.map((day, dayIndex) => {
+          if (day === null) {
+            return <td key={dayIndex} style={cellStyle}></td>;
+          }
           const currentDate = new Date(currentYear, currentMonth, day);
           const displayDate = new Date(currentDate);
-          displayDate.setDate(currentDate.getDate() - 1); // shift display in month for now
 
           const eventsForDay = events ? events.filter(event => {
             const eventDate = new Date(event.date);
             return (
               eventDate.getFullYear() === displayDate.getFullYear() &&
               eventDate.getMonth() === displayDate.getMonth() &&
-              eventDate.getDate() === displayDate.getDate()
+              eventDate.getDate() === displayDate.getDate() - 1
             );
           }) : [];
 
