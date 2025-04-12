@@ -9,10 +9,15 @@ netlify dev
 
 and that should start the client & server
 
+
+
+
 I included the .env file for this submission, specifically because it's meant to
 be run locally. It should work fine, but I included the link to the live deploy
 as well just in case you need it:
 https://boisterous-medovik-b28e78.netlify.app/
+NOTE-- I am actively adding my database access to the site, so the active deploy might have a couple
+issues while I work it out
 
 
 Requirements for this submission:
